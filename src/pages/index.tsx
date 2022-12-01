@@ -1,6 +1,13 @@
+import { WorkItem } from 'azure-devops-node-api/interfaces/WorkItemTrackingInterfaces';
+import { GetServerSideProps } from 'next';
 import Head from 'next/head';
+import { getMyWorkItemsForIteration } from '../lib/azdev_api';
 
-export default function Home() {
+export default function Home({
+  azdevItems: items,
+}: {
+  azdevItems: { source: WorkItem; target: WorkItem }[];
+}) {
   return (
     <div>
       <Head>
@@ -9,7 +16,45 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className='underline'>Hello World!</main>
+      <main>
+        <h1 className="text-4xl font-bold m-3">@CurrentIteration</h1>
+        <div className="flex flex-col lg:flex-row">
+          <div className="flex-1">text</div>
+          <table>
+            <thead>
+              <tr className="border-y">
+                <th className="py-1 px-2">ID</th>
+                <th className="py-1 px-2">Task Title</th>
+                <th className="py-1 px-2">PBI Title</th>
+                <th className="py-1 px-2">Hours (AzD)</th>
+                <th className="py-1 px-2">Hours (App)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((item) => (
+                <tr className="border-b" key={item.target.id}>
+                  <td className="py-1 px-2">{item!.target!.id}</td>
+                  <td className="py-1 px-2">{item!.target!.fields!['System.Title']}</td>
+                  <td className="py-1 px-2">{item!.source!.fields!['System.Title']}</td>
+                  <td className="py-1 px-2">
+                    {item!.target!.fields!['Microsoft.VSTS.Scheduling.CompletedWork']}
+                  </td>
+                  <td className="py-1 px-2 border-b">0</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </main>
     </div>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  const azdevItems = await getMyWorkItemsForIteration();
+  return {
+    props: {
+      azdevItems,
+    },
+  };
+};

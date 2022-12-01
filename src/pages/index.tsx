@@ -1,13 +1,35 @@
+import { TeamSettingsIteration } from 'azure-devops-node-api/interfaces/WorkInterfaces';
 import { WorkItem } from 'azure-devops-node-api/interfaces/WorkItemTrackingInterfaces';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
-import { getMyWorkItemsForIteration } from '../lib/azdev_api';
+import { useMemo } from 'react';
+import { getCurrentIteration, getMyWorkItemsForIteration } from '../lib/azdev_api';
+
+const HOUR_INDICES = [1, 2, 3, 4, 5, 6, 7];
 
 export default function Home({
-  azdevItems: items,
+  azdevItems,
+  iteration,
 }: {
   azdevItems: { source: WorkItem; target: WorkItem }[];
+  iteration: TeamSettingsIteration;
 }) {
+  const allDates = useMemo(() => {
+    const firstDay = new Date(iteration.attributes?.startDate!);
+    const lastDay = new Date(iteration.attributes?.finishDate!);
+
+    const dates = [];
+
+    while (firstDay <= lastDay) {
+      if (firstDay.getDay() !== 0 && firstDay.getDay() !== 6) {
+        dates.push(new Date(firstDay));
+      }
+      firstDay.setDate(firstDay.getDate() + 1);
+    }
+
+    return dates;
+  }, [iteration]);
+
   return (
     <div>
       <Head>
@@ -18,8 +40,36 @@ export default function Home({
 
       <main>
         <h1 className="text-4xl font-bold m-3">@CurrentIteration</h1>
-        <div className="flex flex-col lg:flex-row">
-          <div className="flex-1">text</div>
+        <div className="flex flex-col gap-4">
+          <div className="flex-1">
+            <table>
+              <thead>
+                <th>Day</th>
+                {HOUR_INDICES.map((i) => (
+                  <th>{i}</th>
+                ))}
+              </thead>
+              <tbody>
+                {allDates.map((date) => (
+                  <tr>
+                    <td>{date.toDateString()}</td>
+                    {HOUR_INDICES.map((i) => (
+                      <td key={i}>
+                        <select className="bg-gray-500">
+                          <option></option>
+                          {azdevItems.map((item) => (
+                            <option value={item!.target!.id}>
+                              {item!.target!.fields!['System.Title']}
+                            </option>
+                          ))}
+                        </select>
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
           <table>
             <thead>
               <tr className="border-y">
@@ -31,7 +81,7 @@ export default function Home({
               </tr>
             </thead>
             <tbody>
-              {items.map((item) => (
+              {azdevItems.map((item) => (
                 <tr className="border-b" key={item.target.id}>
                   <td className="py-1 px-2">{item!.target!.id}</td>
                   <td className="py-1 px-2">{item!.target!.fields!['System.Title']}</td>
@@ -52,9 +102,11 @@ export default function Home({
 
 export const getServerSideProps: GetServerSideProps = async () => {
   const azdevItems = await getMyWorkItemsForIteration();
+  const iteration = await getCurrentIteration();
   return {
     props: {
       azdevItems,
+      iteration,
     },
   };
 };

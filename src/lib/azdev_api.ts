@@ -1,4 +1,5 @@
 import * as azdev from 'azure-devops-node-api';
+import { TeamSettingsIteration } from 'azure-devops-node-api/interfaces/WorkInterfaces';
 
 const authHandler = azdev.getPersonalAccessTokenHandler(process.env.AZDEV_TOKEN!);
 const connection = new azdev.WebApi(process.env.ORG_URL!, authHandler);
@@ -50,3 +51,22 @@ export const getMyWorkItemsForIteration = async (iteration?: string) => {
 
   return relationWithWorkItems;
 };
+
+export const getCurrentIteration = async () => {
+  const witApi = await connection.getWorkApi();
+  const iterations = await witApi.getTeamIterations({
+    project: 'Software Development',
+    team: 'MP'
+  }, 'current');
+
+  const iteration = iterations[0];
+
+  return {
+    ...iteration,
+    attributes: {
+      ...iteration.attributes,
+      startDate: iteration.attributes?.startDate?.toISOString(),
+      finishDate: iteration.attributes?.finishDate?.toISOString()
+    }
+  };
+}

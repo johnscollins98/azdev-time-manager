@@ -4,26 +4,28 @@ import { TeamSettingsIteration } from 'azure-devops-node-api/interfaces/WorkInte
 const authHandler = azdev.getPersonalAccessTokenHandler(process.env.AZDEV_TOKEN!);
 const connection = new azdev.WebApi(process.env.ORG_URL!, authHandler);
 
-export const getMyWorkItemsForIteration = async (iteration?: string) => {
+export const getMyWorkItemsForIteration = async (
+  projectId: string,
+  teamId: string,
+  iteration: string
+) => {
   const wipApi = await connection.getWorkItemTrackingApi();
 
-  // TODO: this isn't ideal - i don't like that it has the project/team hardcoded but we can revisit this later
-  const result = await wipApi.queryByWiql({
-    query: `SELECT
+  const result = await wipApi.queryByWiql(
+    {
+      query: `SELECT
     [System.Id]
     FROM workitemLinks
     WHERE
     (
-        [Source].[System.TeamProject] = 'Software Development'
-        AND [Source].[System.WorkItemType] <> 'Feature'
+        [Source].[System.WorkItemType] <> 'Feature'
         AND [Source].[System.WorkItemType] <> 'Epic'
     )
     AND (
         [System.Links.LinkType] = 'System.LinkTypes.Hierarchy-Forward'
     )
     AND (
-        [Target].[System.TeamProject] = 'Software Development'
-        AND [Target].[System.IterationPath] = @currentIteration('[Software Development]\\MP <id:709740f1-64eb-4355-a257-9d90ceb4d63f>')
+        [Target].[System.IterationPath] = '${iteration}'
         AND [Target].[System.State] <> 'Removed'
         AND [Target].[System.AssignedTo] = @me
     )
@@ -31,7 +33,12 @@ export const getMyWorkItemsForIteration = async (iteration?: string) => {
         [System.AssignedTo] DESC
     MODE (Recursive, ReturnMatchingChildren)
     `,
-  });
+    },
+    {
+      projectId,
+      teamId,
+    }
+  );
 
   const relations = result.workItemRelations?.filter((r) => r.source && r.target);
 
@@ -52,21 +59,54 @@ export const getMyWorkItemsForIteration = async (iteration?: string) => {
   return relationWithWorkItems;
 };
 
-export const getCurrentIteration = async () => {
+export const getCurrentIteration = async (projectId: string, teamId: string) => {
   const witApi = await connection.getWorkApi();
-  const iterations = await witApi.getTeamIterations({
-    project: 'Software Development',
-    team: 'MP'
-  }, 'current');
+  const iterations = await witApi.getTeamIterations(
+    {
+      projectId,
+      teamId,
+    },
+    'current'
+  );
 
   const iteration = iterations[0];
 
-  return {
-    ...iteration,
-    attributes: {
-      ...iteration.attributes,
-      startDate: iteration.attributes?.startDate?.toISOString(),
-      finishDate: iteration.attributes?.finishDate?.toISOString()
-    }
-  };
-}
+  return iteration;
+};
+
+export const getProjects = async () => {
+  const coreApi = await connection.getCoreApi();
+  const projects = await coreApi.getProjects();
+  return projects;
+};
+
+export const getTeams = async (projectId: string) => {
+  const coreApi = await connection.getCoreApi();
+  const teams = await coreApi.getTeams(projectId);
+  return teams;
+};
+
+export const getIterations = async (projectId: string, teamId: string) => {
+  const workApi = await connection.getWorkApi();
+  const iterations = await workApi.getTeamIterations({
+    projectId,
+    teamId,
+  });
+  return iterations;
+};
+
+export const getIteration = async (projectId: string, teamId: string, iterationId: string) => {
+  if (iterationId === '@current') {
+    return await getCurrentIteration(projectId, teamId);
+  }
+
+  const workApi = await connection.getWorkApi();
+  const iteration = await workApi.getTeamIteration(
+    {
+      projectId,
+      teamId,
+    },
+    iterationId
+  );
+  return iteration;
+};

@@ -1,8 +1,8 @@
-import { z } from 'zod';
-import { procedure, router } from '../trpc';
+import { router } from '../trpc';
+import { hourLogRouter } from './hour_log';
 
 export const appRouter = router({
-  
+  hourLog: hourLogRouter
 });
 
 // export type definition of API

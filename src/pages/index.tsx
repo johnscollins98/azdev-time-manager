@@ -4,6 +4,7 @@ import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useMemo } from 'react';
 import { getCurrentIteration, getMyWorkItemsForIteration } from '../lib/azdev_api';
+import { trpc } from '../lib/trpc';
 
 const HOUR_INDICES = [1, 2, 3, 4, 5, 6, 7];
 
@@ -14,6 +15,11 @@ export default function Home({
   azdevItems: { source: WorkItem; target: WorkItem }[];
   iteration: TeamSettingsIteration;
 }) {
+  const utils = trpc.useContext();
+  const hourLogMutation = trpc.hourLog.upsertLogEntry.useMutation({ onSuccess() {
+    utils.hourLog.getLogsByIterationId.invalidate()
+  }});  
+  
   const allDates = useMemo(() => {
     const firstDay = new Date(iteration.attributes?.startDate!);
     const lastDay = new Date(iteration.attributes?.finishDate!);
@@ -30,6 +36,29 @@ export default function Home({
     return dates;
   }, [iteration]);
 
+  const { data: hourLog, isError, isLoading, error } = trpc.hourLog.getLogsByIterationId.useQuery(iteration.id!);
+
+  if (isError && error) {
+    return <>{error.message}</>
+  }
+
+  if (isLoading || !hourLog) {
+    return <>Loading...</>
+  }
+
+  const getTaskIdForCell = (date: Date, hourIndex: number) => {
+    const entry = hourLog?.find(
+      (entry) => hourIndex === entry.hourIndex && entry.date.toISOString() === date.toISOString()
+    );
+
+    return entry?.taskId ?? '';
+  };
+
+  const getHoursForTaskId = (taskId: number) => {
+    return hourLog.filter(l => l.taskId === taskId).length;
+  }
+
+
   return (
     <div>
       <Head>
@@ -44,21 +73,34 @@ export default function Home({
           <div className="flex-1">
             <table>
               <thead>
-                <th>Day</th>
-                {HOUR_INDICES.map((i) => (
-                  <th>{i}</th>
-                ))}
+                <tr>
+                  <th>Day</th>
+                  {HOUR_INDICES.map((i) => (
+                    <th key={i}>{i}</th>
+                  ))}
+                </tr>
               </thead>
               <tbody>
                 {allDates.map((date) => (
-                  <tr>
+                  <tr key={date.toISOString()}>
                     <td>{date.toDateString()}</td>
                     {HOUR_INDICES.map((i) => (
                       <td key={i}>
-                        <select className="bg-gray-500">
+                        <select
+                          className="bg-gray-500"
+                          value={getTaskIdForCell(date, i)}
+                          onChange={(e) =>
+                            hourLogMutation.mutate({
+                              iterationId: iteration.id!,
+                              hourIndex: i,
+                              taskId: Number(e.target.value),
+                              date: date,
+                            })
+                          }
+                        >
                           <option></option>
                           {azdevItems.map((item) => (
-                            <option value={item!.target!.id}>
+                            <option value={item!.target!.id} key={item.target.id}>
                               {item!.target!.fields!['System.Title']}
                             </option>
                           ))}
@@ -89,7 +131,7 @@ export default function Home({
                   <td className="py-1 px-2">
                     {item!.target!.fields!['Microsoft.VSTS.Scheduling.CompletedWork']}
                   </td>
-                  <td className="py-1 px-2 border-b">0</td>
+                  <td className="py-1 px-2 border-b">{getHoursForTaskId(item.target.id!)}</td>
                 </tr>
               ))}
             </tbody>

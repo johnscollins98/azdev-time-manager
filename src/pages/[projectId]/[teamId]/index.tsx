@@ -11,7 +11,7 @@ const ProjectPage: NextPage<{ iterations: WebApiTeam[] }> = ({ iterations }) => 
 
   return (
     <Layout>
-      <h2 className="text-xl font-bold mb-3">Select team</h2>
+      <h2 className="text-xl font-bold mb-3">Select Iteration</h2>
       <div className="flex gap-3 mb-3">
         <Link href="/">Projects</Link>
         {'>'}

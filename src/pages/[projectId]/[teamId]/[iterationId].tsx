@@ -90,7 +90,7 @@ export default function Home({
         </div>
         <div className="flex flex-col gap-8">
           <div className="flex-1">
-            <table>
+            <table className='w-full'>
               <thead>
                 <tr>
                   <th>Day</th>
@@ -102,11 +102,11 @@ export default function Home({
               <tbody>
                 {allDates.map((date) => (
                   <tr key={date.toISOString()}>
-                    <td>{date.toDateString()}</td>
+                    <td>{date.toLocaleDateString()}</td>
                     {HOUR_INDICES.map((i) => (
-                      <td key={i}>
+                      <td key={i} className="p-1">
                         <select
-                          className="bg-gray-500"
+                          className="bg-gray-600 w-full rounded py-2 px-1"
                           value={getTaskIdForCell(date, i)}
                           onChange={(e) =>
                             hourLogMutation.mutate({
@@ -169,7 +169,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     teamId as string,
     iterationId as string
   );
-  const azdevItems = await getMyWorkItemsForIteration(projectId, teamId, iteration.path!);
+  const azdevItems = await getMyWorkItemsForIteration(projectId as string, teamId as string, iteration.path!);
   return {
     props: {
       azdevItems,

@@ -9,3 +9,12 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model HourLog {
+  iterationId String
+  date        DateTime
+  hourIndex   Int
+  taskId      Int
+
+  @@id([date, hourIndex])
+}

@@ -81,8 +81,8 @@ const IterationPage = () => {
       </Head>
       <main>
         <h2 className="text-xl font-bold mb-3">{iteration.name}</h2>
-        <div className="flex flex-col gap-8">
-          <div className="flex-1">
+        <div className="flex flex-col">
+          <div className="flex-1 mb-3">
             <table className="w-full">
               <thead>
                 <tr>
@@ -124,7 +124,8 @@ const IterationPage = () => {
               </tbody>
             </table>
           </div>
-          <table className='border-collapse'>
+          <h3 className='font-bold'>Sprint Items - Click row to open item in Azure DevOps</h3>
+          <table className="border-collapse">
             <thead>
               <tr className="border-y border-gray-600">
                 <th className="py-1 px-2">ID</th>
@@ -136,7 +137,11 @@ const IterationPage = () => {
             </thead>
             <tbody>
               {azdevItems.map((item) => (
-                <tr className="border-gray-600 border-y" key={item.target.id}>
+                <tr
+                  className="border-gray-600 hover:cursor-pointer hover:bg-gray-700 border-y"
+                  onClick={() => window.open(item.target._links?.html?.href!, '_blank')}
+                  key={item.target.id}
+                >
                   <td className="py-1 px-2">{item!.target!.id}</td>
                   <td className="py-1 px-2">{item!.target!.fields!['System.Title']}</td>
                   <td className="py-1 px-2">{item!.source!.fields!['System.Title']}</td>

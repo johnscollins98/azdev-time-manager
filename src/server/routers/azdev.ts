@@ -56,10 +56,14 @@ export const azdevRouter = router({
       z.object({
         projectId: z.string(),
         teamId: z.string(),
-        iterationId: z.string(),
+        iterationId: z.string().nullish(),
       })
     )
     .query(async ({ input }) => {
+      if (!input.iterationId) {
+        return [];
+      }
+
       return await getMyWorkItemsForIteration(input.projectId, input.teamId, input.iterationId);
     }),
 });

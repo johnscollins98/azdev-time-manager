@@ -25,11 +25,11 @@ const IterationPage = () => {
     teamId,
     iterationId,
   });
-  const { data: hourLog, isLoading } = trpc.hourLog.getLogsByIterationId.useQuery(iteration?.id!);
+  const { data: hourLog, isLoading } = trpc.hourLog.getLogsByIterationId.useQuery(iteration?.id);
   const { data: azdevItems, isLoading: workItemsLoading } = trpc.azdev.getWorkItems.useQuery({
     teamId,
     projectId,
-    iterationId: iteration?.path ?? '@current',
+    iterationId: iteration?.path,
   });
 
   const allDates = useMemo(() => {
@@ -124,7 +124,7 @@ const IterationPage = () => {
               </tbody>
             </table>
           </div>
-          <h3 className='font-bold'>Sprint Items - Click row to open item in Azure DevOps</h3>
+          <h3 className="font-bold">Sprint Items - Click row to open item in Azure DevOps</h3>
           <table className="border-collapse">
             <thead>
               <tr className="border-y border-gray-600">

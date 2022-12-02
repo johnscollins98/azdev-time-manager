@@ -3,7 +3,11 @@ import { prisma } from '../../lib/prisma';
 import { z } from 'zod';
 
 export const hourLogRouter = router({
-  getLogsByIterationId: procedure.input(z.string()).query(async ({ input }) => {
+  getLogsByIterationId: procedure.input(z.string().nullish()).query(async ({ input }) => {
+    if (!input) {
+      return [];
+    }
+
     return await prisma.hourLog.findMany({
       where: { iterationId: input },
     });

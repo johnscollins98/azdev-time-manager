@@ -84,14 +84,6 @@ const IterationPage = () => {
         <div className="flex flex-col">
           <div className="flex-1 mb-3">
             <table className="w-full">
-              <thead>
-                <tr>
-                  <th>Day</th>
-                  {HOUR_INDICES.map((i) => (
-                    <th key={i}>{i}</th>
-                  ))}
-                </tr>
-              </thead>
               <tbody>
                 {allDates.map((date) => (
                   <tr key={date.toISOString()}>

@@ -8,10 +8,10 @@ export const Layout = ({ children }: PropsWithChildren) => {
       <Head>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="p-2 h-screen flex flex-col">
+      <div className="p-2 h-screen flex flex-col overflow-hidden">
         <h1 className="text-3xl font-bold mb-3">Time Manager</h1>
         <Breadcrumb />
-        {children}
+        <div className="flex flex-col flex-1 overflow-auto pr-2">{children}</div>
       </div>
     </>
   );

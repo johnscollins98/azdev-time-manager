@@ -5,3 +5,27 @@
 body, html {
   @apply bg-gray-50 text-gray-800 dark:bg-gray-800 dark:text-white
 }
+
+/* width */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: none;
+  border-radius: 6px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 6px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

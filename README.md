@@ -6,7 +6,11 @@ It makes use of NextJS, Prisma, tRPC, Tailwind, Postgres and AzDev api to manage
 
 ## Getting Started
 
-Provide your azdev access token and organisation URL in a `.env` file.
+### Requirements before you can get started
+
+* A postgres database available and connection string added to `.env` file with key `DATABASE_URL`
+* An AzDev Personal Access Token with at least read access for work items added to `.env` with key `AZDEV_TOKEN`
+* An AzDev Organisation URL added to `.env` with key `ORG_URL`
 
 Install dependencies with
 
@@ -14,6 +18,11 @@ Install dependencies with
 yarn install
 ```
 
+Then, run migrations on your DB (assuming your connection string is setup in `.env`)
+
+```bash
+yarn prisma db push
+```
 
 Then, run the development server:
 

@@ -10,7 +10,7 @@ const Breadcrumb = () => {
 
   return (
     <div className="flex gap-3 my-3">
-      <Link href="/">Projects</Link>
+      <Link href="/" className='hover:text-gray-300'>Projects</Link>
       {projectId && typeof projectId === 'string' && (
         <>
           <ProjectCrumb projectId={projectId} />

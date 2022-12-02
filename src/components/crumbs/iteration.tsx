@@ -9,7 +9,7 @@ const IterationCrumb = (props: { iterationId: string, projectId: string, teamId:
   return (
     <>
       <div>{'>'}</div>
-      <Link href={`/${props.projectId}/${props.teamId}/${props.iterationId}`}>{data?.name ?? 'Iteration'}</Link>
+      <Link href={`/${props.projectId}/${props.teamId}/${props.iterationId}`} className='hover:text-gray-300'>{data?.name ?? 'Iteration'}</Link>
     </>
   )
 };

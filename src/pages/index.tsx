@@ -20,7 +20,7 @@ const Home = () => {
       <div className="flex flex-col">
         {projects.map((project) => (
           <Link
-            href={project.id!}
+            href={`/projects/${project.id!}`}
             key={project.id}
             className="p-3 my-1 rounded bg-gray-900 hover:bg-gray-700 transition-colors ease-in-out duration-75"
           >

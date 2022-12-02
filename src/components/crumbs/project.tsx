@@ -7,7 +7,7 @@ const ProjectCrumb = ({ projectId }: { projectId: string }) => {
   return (
     <>
       <div>{'>'}</div>
-      <Link href={`/${projectId}`} className='hover:text-gray-300'>{data?.name ?? 'Project'}</Link>
+      <Link href={`/projects/${projectId}`} className='hover:text-gray-300'>{data?.name ?? 'Project'}</Link>
     </>
   );
 };

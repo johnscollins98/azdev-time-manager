@@ -29,16 +29,23 @@ const TeamPage = () => {
         <title>{team.name}</title>
       </Head>
       <h2 className="text-xl font-bold mb-3">Select Iteration</h2>
-      <ul>
-        <li>
-          <Link href={`/${projectId}/${teamId}/@current`}>@CurrentIteration</Link>
-        </li>
+      <div className="flex flex-col">
+        <Link
+          href={`/${projectId}/${teamId}/@current`}
+          className="p-3 my-1 rounded bg-gray-900 hover:bg-gray-700 transition-colors ease-in-out duration-150"
+        >
+          @CurrentIteration
+        </Link>
         {iterations.map((iteration) => (
-          <li key={iteration.id}>
-            <Link href={`/${projectId}/${teamId}/${iteration.id!}`}>{iteration.name}</Link>
-          </li>
+          <Link
+            key={iteration.id}
+            href={`/${projectId}/${teamId}/${iteration.id!}`}
+            className="p-3 my-1 rounded bg-gray-900 hover:bg-gray-700 transition-colors ease-in-out duration-150"
+          >
+            {iteration.name}
+          </Link>
         ))}
-      </ul>
+      </div>
     </Layout>
   );
 };

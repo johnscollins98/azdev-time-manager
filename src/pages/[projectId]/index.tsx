@@ -8,26 +8,34 @@ const ProjectPage = () => {
   const router = useRouter();
   const { projectId } = router.query;
 
-  const { data: project, isLoading: projectIsLoading } = trpc.azdev.getProject.useQuery(projectId as string);
-  const { data: teams, isLoading: teamsAreLoading } = trpc.azdev.getTeams.useQuery(projectId as string);
+  const { data: project, isLoading: projectIsLoading } = trpc.azdev.getProject.useQuery(
+    projectId as string
+  );
+  const { data: teams, isLoading: teamsAreLoading } = trpc.azdev.getTeams.useQuery(
+    projectId as string
+  );
 
   if (projectIsLoading || teamsAreLoading || !project || !teams) {
-    return <>Loading...</>
+    return <>Loading...</>;
   }
 
   return (
     <Layout>
-      <h2 className='text-xl font-bold mb-3'>Select team</h2>
+      <h2 className="text-xl font-bold mb-3">Select team</h2>
       <Head>
         <title>{project.name}</title>
       </Head>
-      <ul>
+      <div className="flex flex-col">
         {teams.map((team) => (
-          <li key={team.id}>
-            <Link href={`/${projectId}/${team.id!}`}>{team.name}</Link>
-          </li>
+          <Link
+            key={team.id}
+            href={`/${projectId}/${team.id!}`}
+            className="p-3 rounded bg-gray-900 hover:bg-gray-700 my-1 transition-colors ease-in-out duration-75"
+          >
+            {team.name}
+          </Link>
         ))}
-      </ul>
+      </div>
     </Layout>
   );
 };

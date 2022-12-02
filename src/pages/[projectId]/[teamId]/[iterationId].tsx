@@ -98,7 +98,7 @@ const IterationPage = () => {
                     {HOUR_INDICES.map((i) => (
                       <td key={i} className="p-1">
                         <select
-                          className="bg-gray-600 w-full rounded py-2 px-1"
+                          className="bg-gray-900 w-full rounded py-2 px-1"
                           value={getTaskIdForCell(date, i)}
                           onChange={(e) =>
                             hourLogMutation.mutate({
@@ -123,9 +123,9 @@ const IterationPage = () => {
               </tbody>
             </table>
           </div>
-          <table>
+          <table className='border-collapse'>
             <thead>
-              <tr className="border-y">
+              <tr className="border-y border-gray-600">
                 <th className="py-1 px-2">ID</th>
                 <th className="py-1 px-2">Task Title</th>
                 <th className="py-1 px-2">PBI Title</th>
@@ -135,14 +135,14 @@ const IterationPage = () => {
             </thead>
             <tbody>
               {azdevItems.map((item) => (
-                <tr className="border-b" key={item.target.id}>
+                <tr className="border-gray-600 border-y" key={item.target.id}>
                   <td className="py-1 px-2">{item!.target!.id}</td>
                   <td className="py-1 px-2">{item!.target!.fields!['System.Title']}</td>
                   <td className="py-1 px-2">{item!.source!.fields!['System.Title']}</td>
                   <td className="py-1 px-2">
                     {item!.target!.fields!['Microsoft.VSTS.Scheduling.CompletedWork']}
                   </td>
-                  <td className="py-1 px-2 border-b">{getHoursForTaskId(item.target.id!)}</td>
+                  <td className="py-1 px-2">{getHoursForTaskId(item.target.id!)}</td>
                 </tr>
               ))}
             </tbody>

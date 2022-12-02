@@ -7,7 +7,7 @@ const Home = () => {
   const { data: projects, isLoading } = trpc.azdev.getProjects.useQuery();
 
   if (isLoading || !projects) {
-    return <>Loading...</>
+    return <>Loading...</>;
   }
 
   return (
@@ -15,14 +15,18 @@ const Home = () => {
       <Head>
         <title>Time Manager</title>
       </Head>
-      <h2 className='text-xl font-bold mb-3'>Select project</h2>
-      <ul>
+      <h2 className="text-xl font-bold mb-3">Select project</h2>
+      <div className="flex flex-col">
         {projects.map((project) => (
-          <li key={project.id}>
-            <Link href={project.id!}>{project.name}</Link>
-          </li>
+          <Link
+            href={project.id!}
+            key={project.id}
+            className="p-3 my-1 rounded bg-gray-900 hover:bg-gray-700 transition-colors ease-in-out duration-75"
+          >
+            {project.name}
+          </Link>
         ))}
-      </ul>
+      </div>
     </Layout>
   );
 };

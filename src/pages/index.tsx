@@ -1,5 +1,6 @@
 import { TeamProjectReference } from 'azure-devops-node-api/interfaces/CoreInterfaces';
 import { GetServerSideProps, NextPage } from 'next';
+import Head from 'next/head';
 import Link from 'next/link';
 import { Layout } from '../components/layout';
 import { getProjects } from '../lib/azdev_api';
@@ -7,6 +8,9 @@ import { getProjects } from '../lib/azdev_api';
 const Home: NextPage<{ projects: TeamProjectReference[] }> = ({ projects }) => {
   return (
     <Layout>
+      <Head>
+        <title>Time Manager</title>
+      </Head>
       <h2 className='text-xl font-bold mb-3'>Select project</h2>
       <ul>
         {projects.map((project) => (

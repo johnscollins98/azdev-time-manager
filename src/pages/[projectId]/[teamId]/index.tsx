@@ -1,23 +1,27 @@
-import { WebApiTeam } from 'azure-devops-node-api/interfaces/CoreInterfaces';
+import { TeamProject, WebApiTeam } from 'azure-devops-node-api/interfaces/CoreInterfaces';
 import { GetServerSideProps, NextPage } from 'next';
+import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Layout } from '../../../components/layout';
-import { getIterations } from '../../../lib/azdev_api';
+import { getIterations, getProject, getTeam } from '../../../lib/azdev_api';
 
-const ProjectPage: NextPage<{ iterations: WebApiTeam[] }> = ({ iterations }) => {
+const ProjectPage: NextPage<{ iterations: WebApiTeam[], project:TeamProject, team: WebApiTeam }> = ({ iterations, project, team }) => {
   const router = useRouter();
   const { projectId, teamId } = router.query;
 
   return (
     <Layout>
+      <Head>
+        <title>{team.name}</title>
+      </Head>
       <h2 className="text-xl font-bold mb-3">Select Iteration</h2>
       <div className="flex gap-3 mb-3">
         <Link href="/">Projects</Link>
         {'>'}
-        <Link href={`/${projectId}`}>Project</Link>
+        <Link href={`/${projectId}`}>{project.name}</Link>
         <div>{'>'}</div>
-        <div>Team</div>
+        <div>{team.name}</div>
       </div>
       <ul>
         <li>
@@ -36,9 +40,13 @@ const ProjectPage: NextPage<{ iterations: WebApiTeam[] }> = ({ iterations }) => 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { projectId, teamId } = context.query;
   const iterations = await getIterations(projectId as string, teamId as string);
+  const project = await getProject(projectId as string);
+  const team = await getTeam(projectId as string, teamId as string);
   return {
     props: {
       iterations: iterations.map((p) => ({ id: p.id, name: p.name })),
+      project: { name: project.name },
+      team: { name: team.name }
     },
   };
 };

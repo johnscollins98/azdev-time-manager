@@ -80,11 +80,23 @@ export const getProjects = async () => {
   return projects;
 };
 
+export const getProject = async (projectId: string) => {
+  const coreApi = await connection.getCoreApi();
+  const project = await coreApi.getProject(projectId);
+  return project;
+}
+
 export const getTeams = async (projectId: string) => {
   const coreApi = await connection.getCoreApi();
   const teams = await coreApi.getTeams(projectId);
   return teams;
 };
+
+export const getTeam = async (projectId: string, teamId: string) => {
+  const coreApi = await connection.getCoreApi();
+  const team = await coreApi.getTeam(projectId, teamId);
+  return team;
+}
 
 export const getIterations = async (projectId: string, teamId: string) => {
   const workApi = await connection.getWorkApi();

@@ -1,3 +1,4 @@
+import { TeamProject, WebApiTeam } from 'azure-devops-node-api/interfaces/CoreInterfaces';
 import { TeamSettingsIteration } from 'azure-devops-node-api/interfaces/WorkInterfaces';
 import { WorkItem } from 'azure-devops-node-api/interfaces/WorkItemTrackingInterfaces';
 import { GetServerSideProps } from 'next';
@@ -6,7 +7,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import { Layout } from '../../../components/layout';
-import { getIteration } from '../../../lib/azdev_api';
+import { getIteration, getProject, getTeam } from '../../../lib/azdev_api';
 import { getMyWorkItemsForIteration } from '../../../lib/azdev_api';
 import { trpc } from '../../../lib/trpc';
 
@@ -15,9 +16,13 @@ const HOUR_INDICES = [1, 2, 3, 4, 5, 6, 7];
 export default function Home({
   azdevItems,
   iteration,
+  project,
+  team
 }: {
   azdevItems: { source: WorkItem; target: WorkItem }[];
   iteration: TeamSettingsIteration;
+  project: TeamProject,
+  team: WebApiTeam
 }) {
   const { projectId, teamId } = useRouter().query;
 
@@ -82,11 +87,11 @@ export default function Home({
         <div className="flex gap-3 mb-3">
           <Link href="/">Projects</Link>
           {'>'}
-          <Link href={`/${projectId}`}>Project</Link>
+          <Link href={`/${projectId}`}>{project.name}</Link>
           {'>'}
-          <Link href={`/${projectId}/${teamId}`}>Team</Link>
+          <Link href={`/${projectId}/${teamId}`}>{team.name}</Link>
           <div>{'>'}</div>
-          <div>Iteration</div>
+          <div>{iteration.name}</div>
         </div>
         <div className="flex flex-col gap-8">
           <div className="flex-1">
@@ -164,6 +169,9 @@ export default function Home({
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { projectId, teamId, iterationId } = context.query;
 
+  const project = await getProject(projectId as string);
+  const team = await getTeam(projectId as string, teamId as string);
+
   const iteration = await getIteration(
     projectId as string,
     teamId as string,
@@ -172,6 +180,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const azdevItems = await getMyWorkItemsForIteration(projectId as string, teamId as string, iteration.path!);
   return {
     props: {
+      project: { name: project.name },
+      team: { name: team.name },
       azdevItems,
       iteration: {
         ...iteration,

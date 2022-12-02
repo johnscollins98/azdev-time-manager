@@ -14,20 +14,12 @@ const TeamPage = () => {
     projectId,
     teamId,
   });
-  const { data: project, isLoading: projectIsLoading } = trpc.azdev.getProject.useQuery(projectId);
   const { data: iterations, isLoading: iterationsAreLoading } = trpc.azdev.getIterations.useQuery({
     projectId,
     teamId,
   });
 
-  if (
-    !team ||
-    !project ||
-    !iterations ||
-    iterationsAreLoading ||
-    teamIsLoading ||
-    projectIsLoading
-  ) {
+  if (!team || !iterations || iterationsAreLoading || teamIsLoading) {
     return <>Loading...</>;
   }
 
@@ -37,13 +29,6 @@ const TeamPage = () => {
         <title>{team.name}</title>
       </Head>
       <h2 className="text-xl font-bold mb-3">Select Iteration</h2>
-      <div className="flex gap-3 mb-3">
-        <Link href="/">Projects</Link>
-        {'>'}
-        <Link href={`/${projectId}`}>{project.name}</Link>
-        <div>{'>'}</div>
-        <div>{team.name}</div>
-      </div>
       <ul>
         <li>
           <Link href={`/${projectId}/${teamId}/@current`}>@CurrentIteration</Link>

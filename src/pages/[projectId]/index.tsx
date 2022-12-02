@@ -21,11 +21,6 @@ const ProjectPage = () => {
       <Head>
         <title>{project.name}</title>
       </Head>
-      <div className="flex gap-3 mb-3">
-        <Link href="/">Projects</Link>
-        <div>{'>'}</div>
-        <div>{project.name}</div>
-      </div>
       <ul>
         {teams.map((team) => (
           <li key={team.id}>

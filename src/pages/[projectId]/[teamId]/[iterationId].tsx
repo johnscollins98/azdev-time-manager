@@ -1,5 +1,4 @@
 import Head from 'next/head';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import { Layout } from '../../../components/layout';
@@ -20,12 +19,6 @@ const IterationPage = () => {
     },
   });
 
-  
-  const { data: project, isLoading: projectIsLoading } = trpc.azdev.getProject.useQuery(projectId);
-  const { data: team, isLoading: teamIsLoading } = trpc.azdev.getTeam.useQuery({
-    projectId,
-    teamId,
-  });
   const { data: iteration, isLoading: iterationIsLoading } = trpc.azdev.getIteration.useQuery({
     projectId,
     teamId,
@@ -59,13 +52,9 @@ const IterationPage = () => {
   // lol
   if (
     isLoading ||
-    teamIsLoading ||
-    projectIsLoading ||
     iterationIsLoading ||
     workItemsLoading ||
     !hourLog ||
-    !project ||
-    !team ||
     !iteration ||
     !azdevItems
   ) {
@@ -89,18 +78,8 @@ const IterationPage = () => {
       <Head>
         <title>{iteration.name}</title>
       </Head>
-
       <main>
         <h2 className="text-xl font-bold mb-3">{iteration.name}</h2>
-        <div className="flex gap-3 mb-3">
-          <Link href="/">Projects</Link>
-          {'>'}
-          <Link href={`/${projectId}`}>{project.name}</Link>
-          {'>'}
-          <Link href={`/${projectId}/${teamId}`}>{team.name}</Link>
-          <div>{'>'}</div>
-          <div>{iteration.name}</div>
-        </div>
         <div className="flex flex-col gap-8">
           <div className="flex-1">
             <table className="w-full">

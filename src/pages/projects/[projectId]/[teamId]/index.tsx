@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import BlockLink from '../../../../components/block_link';
 import { Layout } from '../../../../components/layout';
 import Loader from '../../../../components/loader';
 import { trpc } from '../../../../lib/trpc';
@@ -31,20 +32,18 @@ const TeamPage = () => {
       </Head>
       <h2 className="text-xl font-bold mb-3">Select Iteration</h2>
       <div className="flex flex-col">
-        <Link
+        <BlockLink
           href={`/projects/${projectId}/${teamId}/@current`}
-          className="p-3 my-1 rounded bg-gray-900 hover:bg-gray-700 transition-colors ease-in-out duration-150"
         >
           @CurrentIteration
-        </Link>
+        </BlockLink>
         {iterations.map((iteration) => (
-          <Link
+          <BlockLink
             key={iteration.id}
             href={`/projects/${projectId}/${teamId}/${iteration.id!}`}
-            className="p-3 my-1 rounded bg-gray-900 hover:bg-gray-700 transition-colors ease-in-out duration-150"
           >
             {iteration.name}
-          </Link>
+          </BlockLink>
         ))}
       </div>
     </Layout>

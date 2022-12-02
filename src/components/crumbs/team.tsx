@@ -9,7 +9,7 @@ const TeamCrumb = (props: {  projectId: string, teamId: string }) => {
   return (
     <>
       <div>{'>'}</div>
-      <Link href={`/projects/${props.projectId}/${props.teamId}`} className='hover:text-gray-300'>{data?.name ?? 'Team'}</Link>
+      <Link href={`/projects/${props.projectId}/${props.teamId}`} className='dark:hover:text-gray-300 hover:text-gray-500'>{data?.name ?? 'Team'}</Link>
     </>
   )
 };

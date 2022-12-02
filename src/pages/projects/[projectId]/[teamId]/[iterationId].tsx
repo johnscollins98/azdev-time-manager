@@ -99,7 +99,7 @@ const IterationPage = () => {
                     {HOUR_INDICES.map((i) => (
                       <td key={i} className="p-1">
                         <select
-                          className="bg-gray-900 w-full rounded py-2 px-1"
+                          className="dark:bg-gray-900 border dark:border-0 w-full rounded py-2 px-1"
                           value={getTaskIdForCell(date, i)}
                           onChange={(e) =>
                             hourLogMutation.mutate({
@@ -138,7 +138,7 @@ const IterationPage = () => {
             <tbody>
               {azdevItems.map((item) => (
                 <tr
-                  className="border-gray-600 hover:cursor-pointer hover:bg-gray-700 border-y"
+                  className="border-gray-600 hover:cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 border-y"
                   onClick={() => window.open(item.target._links?.html?.href!, '_blank')}
                   key={item.target.id}
                 >

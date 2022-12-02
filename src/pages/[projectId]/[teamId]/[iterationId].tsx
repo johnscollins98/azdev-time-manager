@@ -2,6 +2,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import { Layout } from '../../../components/layout';
+import Loader from '../../../components/loader';
 import { trpc } from '../../../lib/trpc';
 
 const HOUR_INDICES = [1, 2, 3, 4, 5, 6, 7];
@@ -58,7 +59,7 @@ const IterationPage = () => {
     !iteration ||
     !azdevItems
   ) {
-    return <>Loading...</>;
+    return <Loader />;
   }
 
   const getTaskIdForCell = (date: Date, hourIndex: number) => {

@@ -1,13 +1,14 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import { Layout } from '../components/layout';
+import Loader from '../components/loader';
 import { trpc } from '../lib/trpc';
 
 const Home = () => {
   const { data: projects, isLoading } = trpc.azdev.getProjects.useQuery();
 
   if (isLoading || !projects) {
-    return <>Loading...</>;
+    return <Loader />;
   }
 
   return (

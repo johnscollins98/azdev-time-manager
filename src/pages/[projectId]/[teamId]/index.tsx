@@ -2,6 +2,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Layout } from '../../../components/layout';
+import Loader from '../../../components/loader';
 import { trpc } from '../../../lib/trpc';
 
 const TeamPage = () => {
@@ -20,7 +21,7 @@ const TeamPage = () => {
   });
 
   if (!team || !iterations || iterationsAreLoading || teamIsLoading) {
-    return <>Loading...</>;
+    return <Loader />;
   }
 
   return (

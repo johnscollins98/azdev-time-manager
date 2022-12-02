@@ -85,29 +85,32 @@ const IterationPage = () => {
           <div className="flex-1 mb-3">
             <div className="w-full flex flex-col gap-2">
               {allDates.map((date) => (
-                <div className='flex flex-col sm:flex-row items-center flex-1 gap-2' key={date.toISOString()}>
-                  <div className='font-bold'>{date.toLocaleDateString()}</div>
+                <div
+                  className="flex flex-col sm:flex-row items-center flex-1 gap-2"
+                  key={date.toISOString()}
+                >
+                  <div className="font-bold">{date.toLocaleDateString()}</div>
                   {HOUR_INDICES.map((i) => (
-                      <select
-                        className="dark:bg-gray-900 border dark:border-0 w-full rounded py-2 px-1"
-                        value={getTaskIdForCell(date, i)}
-                        key={i}
-                        onChange={(e) =>
-                          hourLogMutation.mutate({
-                            iterationId: iteration.id!,
-                            hourIndex: i,
-                            taskId: Number(e.target.value),
-                            date: date,
-                          })
-                        }
-                      >
-                        <option></option>
-                        {azdevItems.map((item) => (
-                          <option value={item!.target!.id} key={item.target.id}>
-                            {item!.target!.fields!['System.Title']}
-                          </option>
-                        ))}
-                      </select>
+                    <select
+                      className="dark:bg-gray-900 border dark:border-0 w-full rounded py-2 px-1"
+                      value={getTaskIdForCell(date, i)}
+                      key={i}
+                      onChange={(e) =>
+                        hourLogMutation.mutate({
+                          iterationId: iteration.id!,
+                          hourIndex: i,
+                          taskId: Number(e.target.value),
+                          date: date,
+                        })
+                      }
+                    >
+                      <option></option>
+                      {azdevItems.map((item) => (
+                        <option value={item!.target!.id} key={item.target.id}>
+                          {item!.target!.fields!['System.Title']}
+                        </option>
+                      ))}
+                    </select>
                   ))}
                 </div>
               ))}
@@ -117,9 +120,9 @@ const IterationPage = () => {
           <table className="border-collapse">
             <thead>
               <tr className="border-y border-gray-600">
-                <th className="py-1 px-2">ID</th>
+                <th className="py-1 px-2 hidden sm:table-cell">ID</th>
                 <th className="py-1 px-2">Task Title</th>
-                <th className="py-1 px-2">PBI Title</th>
+                <th className="py-1 px-2 hidden sm:table-cell">PBI Title</th>
                 <th className="py-1 px-2">Hours (AzD)</th>
                 <th className="py-1 px-2">Hours (App)</th>
               </tr>
@@ -131,9 +134,9 @@ const IterationPage = () => {
                   onClick={() => window.open(item.target._links?.html?.href!, '_blank')}
                   key={item.target.id}
                 >
-                  <td className="py-1 px-2">{item!.target!.id}</td>
+                  <td className="py-1 px-2 hidden sm:table-cell">{item!.target!.id}</td>
                   <td className="py-1 px-2">{item!.target!.fields!['System.Title']}</td>
-                  <td className="py-1 px-2">{item!.source!.fields!['System.Title']}</td>
+                  <td className="py-1 px-2 hidden sm:table-cell">{item!.source!.fields!['System.Title']}</td>
                   <td className="py-1 px-2">
                     {item!.target!.fields!['Microsoft.VSTS.Scheduling.CompletedWork']}
                   </td>

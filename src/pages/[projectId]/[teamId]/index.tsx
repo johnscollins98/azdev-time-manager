@@ -1,14 +1,35 @@
-import { TeamProject, WebApiTeam } from 'azure-devops-node-api/interfaces/CoreInterfaces';
-import { GetServerSideProps, NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Layout } from '../../../components/layout';
-import { getIterations, getProject, getTeam } from '../../../lib/azdev_api';
+import { trpc } from '../../../lib/trpc';
 
-const ProjectPage: NextPage<{ iterations: WebApiTeam[], project:TeamProject, team: WebApiTeam }> = ({ iterations, project, team }) => {
+const TeamPage = () => {
   const router = useRouter();
-  const { projectId, teamId } = router.query;
+
+  const projectId = router.query.projectId as string;
+  const teamId = router.query.teamId as string;
+
+  const { data: team, isLoading: teamIsLoading } = trpc.azdev.getTeam.useQuery({
+    projectId,
+    teamId,
+  });
+  const { data: project, isLoading: projectIsLoading } = trpc.azdev.getProject.useQuery(projectId);
+  const { data: iterations, isLoading: iterationsAreLoading } = trpc.azdev.getIterations.useQuery({
+    projectId,
+    teamId,
+  });
+
+  if (
+    !team ||
+    !project ||
+    !iterations ||
+    iterationsAreLoading ||
+    teamIsLoading ||
+    projectIsLoading
+  ) {
+    return <>Loading...</>;
+  }
 
   return (
     <Layout>
@@ -37,18 +58,4 @@ const ProjectPage: NextPage<{ iterations: WebApiTeam[], project:TeamProject, tea
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { projectId, teamId } = context.query;
-  const iterations = await getIterations(projectId as string, teamId as string);
-  const project = await getProject(projectId as string);
-  const team = await getTeam(projectId as string, teamId as string);
-  return {
-    props: {
-      iterations: iterations.map((p) => ({ id: p.id, name: p.name })),
-      project: { name: project.name },
-      team: { name: team.name }
-    },
-  };
-};
-
-export default ProjectPage;
+export default TeamPage;

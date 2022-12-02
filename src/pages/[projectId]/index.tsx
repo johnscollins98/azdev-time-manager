@@ -1,14 +1,19 @@
-import { TeamProject, WebApiTeam } from 'azure-devops-node-api/interfaces/CoreInterfaces';
-import { GetServerSideProps, NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Layout } from '../../components/layout';
-import { getProject, getTeams } from '../../lib/azdev_api';
+import { trpc } from '../../lib/trpc';
 
-const ProjectPage: NextPage<{ teams: WebApiTeam[], project: TeamProject }> = ({ teams, project }) => {
+const ProjectPage = () => {
   const router = useRouter();
   const { projectId } = router.query;
+
+  const { data: project, isLoading: projectIsLoading } = trpc.azdev.getProject.useQuery(projectId as string);
+  const { data: teams, isLoading: teamsAreLoading } = trpc.azdev.getTeams.useQuery(projectId as string);
+
+  if (projectIsLoading || teamsAreLoading || !project || !teams) {
+    return <>Loading...</>
+  }
 
   return (
     <Layout>
@@ -30,18 +35,6 @@ const ProjectPage: NextPage<{ teams: WebApiTeam[], project: TeamProject }> = ({ 
       </ul>
     </Layout>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { projectId } = context.query;
-  const project = await getProject(projectId as string);
-  const teams = await getTeams(projectId as string);
-  return {
-    props: {
-      project: { name: project.name },
-      teams: teams.map((p) => ({ id: p.id, name: p.name })),
-    },
-  };
 };
 
 export default ProjectPage;

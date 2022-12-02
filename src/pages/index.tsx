@@ -1,11 +1,15 @@
-import { TeamProjectReference } from 'azure-devops-node-api/interfaces/CoreInterfaces';
-import { GetServerSideProps, NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { Layout } from '../components/layout';
-import { getProjects } from '../lib/azdev_api';
+import { trpc } from '../lib/trpc';
 
-const Home: NextPage<{ projects: TeamProjectReference[] }> = ({ projects }) => {
+const Home = () => {
+  const { data: projects, isLoading } = trpc.azdev.getProjects.useQuery();
+
+  if (isLoading || !projects) {
+    return <>Loading...</>
+  }
+
   return (
     <Layout>
       <Head>
@@ -21,15 +25,6 @@ const Home: NextPage<{ projects: TeamProjectReference[] }> = ({ projects }) => {
       </ul>
     </Layout>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async () => {
-  const projects = await getProjects();
-  return {
-    props: {
-      projects: projects.map((p) => ({ id: p.id, name: p.name })),
-    },
-  };
 };
 
 export default Home;

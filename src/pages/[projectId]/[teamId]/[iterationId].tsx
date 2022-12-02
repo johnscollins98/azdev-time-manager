@@ -1,30 +1,17 @@
-import { TeamProject, WebApiTeam } from 'azure-devops-node-api/interfaces/CoreInterfaces';
-import { TeamSettingsIteration } from 'azure-devops-node-api/interfaces/WorkInterfaces';
-import { WorkItem } from 'azure-devops-node-api/interfaces/WorkItemTrackingInterfaces';
-import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import { Layout } from '../../../components/layout';
-import { getIteration, getProject, getTeam } from '../../../lib/azdev_api';
-import { getMyWorkItemsForIteration } from '../../../lib/azdev_api';
 import { trpc } from '../../../lib/trpc';
 
 const HOUR_INDICES = [1, 2, 3, 4, 5, 6, 7];
 
-export default function Home({
-  azdevItems,
-  iteration,
-  project,
-  team
-}: {
-  azdevItems: { source: WorkItem; target: WorkItem }[];
-  iteration: TeamSettingsIteration;
-  project: TeamProject,
-  team: WebApiTeam
-}) {
-  const { projectId, teamId } = useRouter().query;
+const IterationPage = () => {
+  const router = useRouter();
+  const projectId = router.query.projectId as string;
+  const teamId = router.query.teamId as string;
+  const iterationId = router.query.iterationId as string;
 
   const utils = trpc.useContext();
   const hourLogMutation = trpc.hourLog.upsertLogEntry.useMutation({
@@ -33,7 +20,27 @@ export default function Home({
     },
   });
 
+  
+  const { data: project, isLoading: projectIsLoading } = trpc.azdev.getProject.useQuery(projectId);
+  const { data: team, isLoading: teamIsLoading } = trpc.azdev.getTeam.useQuery({
+    projectId,
+    teamId,
+  });
+  const { data: iteration, isLoading: iterationIsLoading } = trpc.azdev.getIteration.useQuery({
+    projectId,
+    teamId,
+    iterationId,
+  });
+  const { data: hourLog, isLoading } = trpc.hourLog.getLogsByIterationId.useQuery(iteration?.id!);
+  const { data: azdevItems, isLoading: workItemsLoading } = trpc.azdev.getWorkItems.useQuery({
+    teamId,
+    projectId,
+    iterationId: iteration?.path ?? '@current',
+  });
+
   const allDates = useMemo(() => {
+    if (!iteration) return [];
+
     const firstDay = new Date(iteration.attributes?.startDate!);
     const lastDay = new Date(iteration.attributes?.finishDate!);
 
@@ -49,18 +56,19 @@ export default function Home({
     return dates;
   }, [iteration]);
 
-  const {
-    data: hourLog,
-    isError,
-    isLoading,
-    error,
-  } = trpc.hourLog.getLogsByIterationId.useQuery(iteration.id!);
-
-  if (isError && error) {
-    return <>{error.message}</>;
-  }
-
-  if (isLoading || !hourLog) {
+  // lol
+  if (
+    isLoading ||
+    teamIsLoading ||
+    projectIsLoading ||
+    iterationIsLoading ||
+    workItemsLoading ||
+    !hourLog ||
+    !project ||
+    !team ||
+    !iteration ||
+    !azdevItems
+  ) {
     return <>Loading...</>;
   }
 
@@ -95,7 +103,7 @@ export default function Home({
         </div>
         <div className="flex flex-col gap-8">
           <div className="flex-1">
-            <table className='w-full'>
+            <table className="w-full">
               <thead>
                 <tr>
                   <th>Day</th>
@@ -164,32 +172,6 @@ export default function Home({
       </main>
     </Layout>
   );
-}
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { projectId, teamId, iterationId } = context.query;
-
-  const project = await getProject(projectId as string);
-  const team = await getTeam(projectId as string, teamId as string);
-
-  const iteration = await getIteration(
-    projectId as string,
-    teamId as string,
-    iterationId as string
-  );
-  const azdevItems = await getMyWorkItemsForIteration(projectId as string, teamId as string, iteration.path!);
-  return {
-    props: {
-      project: { name: project.name },
-      team: { name: team.name },
-      azdevItems,
-      iteration: {
-        ...iteration,
-        attributes: {
-          startDate: iteration.attributes?.startDate?.toISOString(),
-          finishDate: iteration.attributes?.finishDate?.toISOString(),
-        },
-      },
-    },
-  };
 };
+
+export default IterationPage;

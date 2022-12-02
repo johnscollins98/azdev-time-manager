@@ -83,38 +83,35 @@ const IterationPage = () => {
         <h2 className="text-xl font-bold mb-3">{iteration.name}</h2>
         <div className="flex flex-col">
           <div className="flex-1 mb-3">
-            <table className="w-full">
-              <tbody>
-                {allDates.map((date) => (
-                  <tr key={date.toISOString()}>
-                    <td>{date.toLocaleDateString()}</td>
-                    {HOUR_INDICES.map((i) => (
-                      <td key={i} className="p-1">
-                        <select
-                          className="dark:bg-gray-900 border dark:border-0 w-full rounded py-2 px-1"
-                          value={getTaskIdForCell(date, i)}
-                          onChange={(e) =>
-                            hourLogMutation.mutate({
-                              iterationId: iteration.id!,
-                              hourIndex: i,
-                              taskId: Number(e.target.value),
-                              date: date,
-                            })
-                          }
-                        >
-                          <option></option>
-                          {azdevItems.map((item) => (
-                            <option value={item!.target!.id} key={item.target.id}>
-                              {item!.target!.fields!['System.Title']}
-                            </option>
-                          ))}
-                        </select>
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <div className="w-full flex flex-col gap-2">
+              {allDates.map((date) => (
+                <div className='flex items-center flex-1 gap-2' key={date.toISOString()}>
+                  <div>{date.toLocaleDateString()}</div>
+                  {HOUR_INDICES.map((i) => (
+                      <select
+                        className="dark:bg-gray-900 border dark:border-0 w-full rounded py-2 px-1"
+                        value={getTaskIdForCell(date, i)}
+                        key={i}
+                        onChange={(e) =>
+                          hourLogMutation.mutate({
+                            iterationId: iteration.id!,
+                            hourIndex: i,
+                            taskId: Number(e.target.value),
+                            date: date,
+                          })
+                        }
+                      >
+                        <option></option>
+                        {azdevItems.map((item) => (
+                          <option value={item!.target!.id} key={item.target.id}>
+                            {item!.target!.fields!['System.Title']}
+                          </option>
+                        ))}
+                      </select>
+                  ))}
+                </div>
+              ))}
+            </div>
           </div>
           <h3 className="font-bold">Sprint Items - Click row to open item in Azure DevOps</h3>
           <table className="border-collapse">

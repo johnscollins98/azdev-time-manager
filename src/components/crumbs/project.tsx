@@ -14,7 +14,7 @@ const ProjectCrumb = ({ projectId }: { projectId: string }) => {
         className="dark:hover:text-gray-300 hover:text-gray-500 flex items-center gap-2"
       >
         <AiFillProject />
-        {data?.name ?? 'Project'}
+        <span className='hidden sm:block'>{data?.name ?? 'Project'}</span>
       </Link>
     </>
   );

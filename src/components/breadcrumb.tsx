@@ -11,7 +11,7 @@ const Breadcrumb = () => {
 
   return (
     <div className="flex self-start gap-3 mb-3 py-2 px-3 border dark:border-0 dark:bg-gray-900 rounded text-xs font-bold items-center">
-      <Link href="/" className='dark:hover:text-gray-300 hover:text-gray-500 flex items-center gap-2'><AiFillHome /> Projects</Link>
+      <Link href="/" className='dark:hover:text-gray-300 hover:text-gray-500 flex items-center gap-2'><AiFillHome /><span className='hidden sm:block'>Projects</span></Link>
       {projectId && typeof projectId === 'string' && (
         <>
           <ProjectCrumb projectId={projectId} />

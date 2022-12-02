@@ -13,7 +13,9 @@ const TeamCrumb = (props: {  projectId: string, teamId: string }) => {
       <RxCaretRight />
       <Link href={`/projects/${props.projectId}/${props.teamId}`} className='dark:hover:text-gray-300 hover:text-gray-500 flex items-center gap-2'>
         <AiOutlineTeam />
-        {data?.name ?? 'Team'}
+        <span className='hidden sm:block'>
+          {data?.name ?? 'Team'}
+        </span>
       </Link>
     </>
   )

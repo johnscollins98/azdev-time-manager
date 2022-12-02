@@ -85,8 +85,8 @@ const IterationPage = () => {
           <div className="flex-1 mb-3">
             <div className="w-full flex flex-col gap-2">
               {allDates.map((date) => (
-                <div className='flex items-center flex-1 gap-2' key={date.toISOString()}>
-                  <div>{date.toLocaleDateString()}</div>
+                <div className='flex flex-col sm:flex-row items-center flex-1 gap-2' key={date.toISOString()}>
+                  <div className='font-bold'>{date.toLocaleDateString()}</div>
                   {HOUR_INDICES.map((i) => (
                       <select
                         className="dark:bg-gray-900 border dark:border-0 w-full rounded py-2 px-1"

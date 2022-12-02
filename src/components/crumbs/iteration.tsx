@@ -16,7 +16,7 @@ const IterationCrumb = (props: { iterationId: string; projectId: string; teamId:
         className="dark:hover:text-gray-300 hover:text-gray-500 flex items-center gap-2"
       >
         <MdLoop />
-        {data?.name ?? 'Iteration'}
+        <span className="hidden sm:block">{data?.name ?? 'Iteration'}</span>
       </Link>
     </>
   );

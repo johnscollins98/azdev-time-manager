@@ -4,6 +4,8 @@ import { useMemo } from 'react';
 import { Layout } from '../../../../components/layout';
 import Loader from '../../../../components/loader';
 import { trpc } from '../../../../lib/trpc';
+import { SiAzuredevops } from 'react-icons/si';
+import { AiFillClockCircle } from 'react-icons/ai';
 
 const HOUR_INDICES = [1, 2, 3, 4, 5, 6, 7];
 
@@ -123,8 +125,8 @@ const IterationPage = () => {
                 <th className="py-1 px-2 hidden sm:table-cell">ID</th>
                 <th className="py-1 px-2">Task Title</th>
                 <th className="py-1 px-2 hidden sm:table-cell">PBI Title</th>
-                <th className="py-1 px-2">Hours (AzD)</th>
-                <th className="py-1 px-2">Hours (App)</th>
+                <th className="py-1 px-2"><SiAzuredevops /> </th>
+                <th className="py-1 px-2"><AiFillClockCircle /></th>
               </tr>
             </thead>
             <tbody>
